@@ -1,0 +1,45 @@
+from adafruit_servokit import ServoKit
+import time
+
+# Initialize the PCA9685 motor driver (16 channels)
+kit = ServoKit(channels=16)
+
+# Servo channels (connected via PCA9685)
+servoR = kit.servo[5]  # Right arm
+servoL = kit.servo[11]  # Left arm
+servoB = kit.servo[13]  # Body rotation
+
+print("Servo motor test started. The servos should move to different angles.")
+
+try:
+    while True:
+        # Right Arm Servo Test
+        print("Testing Right Arm Servo...")
+        servoR.angle = 0
+        time.sleep(1)
+        servoR.angle = 90
+        time.sleep(1)
+        servoR.angle = 180
+        time.sleep(1)
+
+        # Left Arm Servo Test
+        print("Testing Left Arm Servo...")
+        servoL.angle = 0
+        time.sleep(1)
+        servoL.angle = 90
+        time.sleep(1)
+        servoL.angle = 180
+        time.sleep(1)
+
+        # Body Rotation Servo Test
+        print("Testing Body Rotation Servo...")
+        servoB.angle = 45
+        time.sleep(1)
+        servoB.angle = 90
+        time.sleep(1)
+        servoB.angle = 135
+        time.sleep(1)
+
+        print("Repeating the test...")
+except KeyboardInterrupt:
+    print("Servo test stopped.")

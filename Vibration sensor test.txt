@@ -1,0 +1,23 @@
+import RPi.GPIO as GPIO
+import time
+
+# Pin configuration
+vibration_pin = 22
+
+# GPIO setup
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(vibration_pin, GPIO.IN)
+
+print("Vibration sensor test started. Shake or tap the sensor to see output.")
+
+try:
+    while True:
+        if GPIO.input(vibration_pin) == GPIO.HIGH:
+            print("Vibration detected!")
+        else:
+            print("No vibration")
+        time.sleep(0.5)
+except KeyboardInterrupt:
+    print("Test stopped")
+finally:
+    GPIO.cleanup()

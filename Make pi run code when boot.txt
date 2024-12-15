@@ -1,0 +1,70 @@
+1.Place the main Python script (e.g., main_robot.py) in a directory on the Pi. For simplicity, use /home/pi/robot/.
+mkdir -p /home/pi/robot
+mv your_code.py /home/pi/robot/main_robot.py
+
+
+2.
+sudo nano /etc/systemd/system/robot.service
+
+
+3. Add the Following Configuration: Replace /home/pi/robot/main_robot.py with the path to your main Python script:
+[Unit]
+Description=Robot Startup Service
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/pi/robot/main_robot.py
+WorkingDirectory=/home/pi/robot
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+
+
+Save and Exit:
+
+Press Ctrl+O to save.
+Press Ctrl+X to exit.
+
+
+4. Enable the service to start on boot:
+
+sudo systemctl enable robot.service
+
+
+5. Test the Service Start the service manually to test it:
+
+
+sudo systemctl start robot.service
+
+sudo systemctl status robot.service
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

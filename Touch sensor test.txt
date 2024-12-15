@@ -1,0 +1,23 @@
+import RPi.GPIO as GPIO
+import time
+
+# Pin configuration
+touch_pin = 17
+
+# GPIO setup
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(touch_pin, GPIO.IN)
+
+print("Touch sensor test started. Touch the sensor to see output.")
+
+try:
+    while True:
+        if GPIO.input(touch_pin) == GPIO.HIGH:
+            print("Touch detected!")
+        else:
+            print("No touch")
+        time.sleep(0.5)
+except KeyboardInterrupt:
+    print("Test stopped")
+finally:
+    GPIO.cleanup()
