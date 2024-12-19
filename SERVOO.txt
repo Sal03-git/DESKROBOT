@@ -1,0 +1,55 @@
+import time
+from adafruit_pca9685 import PCA9685
+import board
+import busio
+
+# Set up I2C communication
+i2c = busio.I2C(board.SCL, board.SDA)
+pca = PCA9685(i2c)
+pca.frequency = 60  # Set the PWM frequency (60 Hz is typical for servos)
+
+# Function to control the servo
+def set_servo_angle(channel, angle):
+    pulse_length = 1000000  # 1,000,000 us per second
+    period = 60.0  # 60 Hz, typical for servos
+    pulse = pulse_length / period
+    angle = min(max(angle, 0), 180)  # Ensure angle is between 0 and 180
+    pulse_width = pulse * (angle + 90)  # Convert angle to pulse width
+    pca.channels[channel].duty_cycle = int(pulse_width)
+
+# Test the two servos on channels 0 and 1
+try:
+    while True:
+        # Move Servo 1 to 0 degrees
+        set_servo_angle(0, 0)
+        print("Servo 1 moving to 0 degrees")
+        time.sleep(1)
+
+        # Move Servo 1 to 90 degrees
+        set_servo_angle(0, 90)
+        print("Servo 1 moving to 90 degrees")
+        time.sleep(1)
+
+        # Move Servo 1 to 180 degrees
+        set_servo_angle(0, 180)
+        print("Servo 1 moving to 180 degrees")
+        time.sleep(1)
+
+        # Move Servo 2 to 0 degrees
+        set_servo_angle(1, 0)
+        print("Servo 2 moving to 0 degrees")
+        time.sleep(1)
+
+        # Move Servo 2 to 90 degrees
+        set_servo_angle(1, 90)
+        print("Servo 2 moving to 90 degrees")
+        time.sleep(1)
+
+        # Move Servo 2 to 180 degrees
+        set_servo_angle(1, 180)
+        print("Servo 2 moving to 180 degrees")
+        time.sleep(1)
+
+except KeyboardInterrupt:
+    print("Test interrupted by user.")
+    pca.deinit()
