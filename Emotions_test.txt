@@ -1,0 +1,39 @@
+import os
+import time
+from PIL import Image
+import RPi.GPIO as GPIO
+from waveshare_2inch import LCD  # Assuming you've installed the Waveshare library
+
+# Initialize Waveshare LCD
+lcd = LCD()
+lcd.init()
+
+# Define the paths to the emotion directories
+emotion_paths = {
+    "bootup": "/home/user/Desktop/Emo-main/Code/emotions/bootup",
+    "happy": "/home/user/Desktop/Emo-main/Code/emotions/happy",
+    "neutral": "/home/user/Desktop/Emo-main/Code/emotions/neutral"
+}
+
+def display_frames(emotion_path):
+    """Display frames from the emotion directory"""
+    frames = sorted([f for f in os.listdir(emotion_path) if f.endswith('.png')])
+    
+    for frame in frames:
+        frame_path = os.path.join(emotion_path, frame)
+        image = Image.open(frame_path)
+        lcd.display(image)
+        time.sleep(0.1)  # Display each frame for 0.1 seconds
+
+def test_emotions():
+    """Test all emotions in sequence"""
+    for emotion, path in emotion_paths.items():
+        print(f"Testing {emotion} emotion...")
+        display_frames(path)
+        time.sleep(1)  # Pause between emotions
+
+# Run the test
+test_emotions()
+
+# Cleanup GPIO
+GPIO.cleanup()
