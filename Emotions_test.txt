@@ -1,13 +1,21 @@
-import time
 import os
+import time
 from PIL import Image
-from lib import LCD_2inch  # Import the LCD library (adjust based on your folder structure)
+from lib import LCD_2inch  # Adjust this import to match your LCD library
 
 # Initialize LCD
 def lcd_test():
     try:
-        # Create LCD object
-        disp = LCD_2inch.LCD_2inch()
+        # Create LCD object with specific GPIO pin settings
+        disp = LCD_2inch.LCD_2inch(
+            rst=27,        # Reset pin set to GPIO 27
+            dc=25,         # Data/Command pin set to GPIO 25
+            bl=18,         # Backlight control pin set to GPIO 18 (PWM capable)
+            miso=9,        # MISO is not used but if required, set appropriately
+            mosi=10,       # MOSI set to GPIO 10
+            cs=8,          # Chip Select pin set to GPIO 8
+            clk=11         # Clock pin set to GPIO 11
+        )
         disp.Init()
         disp.clear()  # Clear the screen to start fresh
         
@@ -21,7 +29,6 @@ def lcd_test():
         def display_frames(emotion_path):
             """Display frames from the emotion directory"""
             frames = sorted([f for f in os.listdir(emotion_path) if f.endswith('.png')])
-
             for frame in frames:
                 frame_path = os.path.join(emotion_path, frame)
                 image = Image.open(frame_path)
@@ -34,9 +41,8 @@ def lcd_test():
             display_frames(path)
             time.sleep(1)  # Pause between emotions
         
-        # Clear the screen after displaying all emotions
         print("Clearing screen...")
-        disp.clear()
+        disp.clear()  # Clear the screen after displaying all emotions
 
     except KeyboardInterrupt:
         disp.module_exit()  # Graceful exit
