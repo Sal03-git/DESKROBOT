@@ -1,39 +1,48 @@
-import os
 import time
+import os
 from PIL import Image
-import RPi.GPIO as GPIO
-from waveshare_2inch import LCD  # Assuming you've installed the Waveshare library
+from lib import LCD_2inch  # Import the LCD library (adjust based on your folder structure)
 
-# Initialize Waveshare LCD
-lcd = LCD()
-lcd.init()
+# Initialize LCD
+def lcd_test():
+    try:
+        # Create LCD object
+        disp = LCD_2inch.LCD_2inch()
+        disp.Init()
+        disp.clear()  # Clear the screen to start fresh
+        
+        # Define the paths to the emotion directories
+        emotion_paths = {
+            "bootup": "/home/user/Desktop/Emo-main/Code/emotions/bootup",
+            "happy": "/home/user/Desktop/Emo-main/Code/emotions/happy",
+            "neutral": "/home/user/Desktop/Emo-main/Code/emotions/neutral"
+        }
 
-# Define the paths to the emotion directories
-emotion_paths = {
-    "bootup": "/home/user/Desktop/Emo-main/Code/emotions/bootup",
-    "happy": "/home/user/Desktop/Emo-main/Code/emotions/happy",
-    "neutral": "/home/user/Desktop/Emo-main/Code/emotions/neutral"
-}
+        def display_frames(emotion_path):
+            """Display frames from the emotion directory"""
+            frames = sorted([f for f in os.listdir(emotion_path) if f.endswith('.png')])
 
-def display_frames(emotion_path):
-    """Display frames from the emotion directory"""
-    frames = sorted([f for f in os.listdir(emotion_path) if f.endswith('.png')])
-    
-    for frame in frames:
-        frame_path = os.path.join(emotion_path, frame)
-        image = Image.open(frame_path)
-        lcd.display(image)
-        time.sleep(0.1)  # Display each frame for 0.1 seconds
+            for frame in frames:
+                frame_path = os.path.join(emotion_path, frame)
+                image = Image.open(frame_path)
+                disp.ShowImage(image)  # Display image on the LCD
+                time.sleep(0.1)  # Display each frame for 0.1 seconds
 
-def test_emotions():
-    """Test all emotions in sequence"""
-    for emotion, path in emotion_paths.items():
-        print(f"Testing {emotion} emotion...")
-        display_frames(path)
-        time.sleep(1)  # Pause between emotions
+        # Test all emotions in sequence
+        for emotion, path in emotion_paths.items():
+            print(f"Displaying {emotion} emotion...")
+            display_frames(path)
+            time.sleep(1)  # Pause between emotions
+        
+        # Clear the screen after displaying all emotions
+        print("Clearing screen...")
+        disp.clear()
 
-# Run the test
-test_emotions()
+    except KeyboardInterrupt:
+        disp.module_exit()  # Graceful exit
+        print("Test interrupted")
+    except IOError as e:
+        print(f"Error: {e}")
 
-# Cleanup GPIO
-GPIO.cleanup()
+if __name__ == "__main__":
+    lcd_test()
