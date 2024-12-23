@@ -1,13 +1,33 @@
 import time
 import os
+import spidev
 from PIL import Image
-from lib import LCD_2inch  # Import the LCD library (adjust based on your folder structure)
+from lib import LCD_2inch  # Make sure this library is correctly installed and supports SPI
+import RPi.GPIO as GPIO
+
+# Setup for GPIO (DC, RST, BL)
+LCD_DC = 24
+LCD_RST = 25
+LCD_BL = 18
+LCD_CS = 8  # Chip Select if needed by your specific library
+
+# Setup SPI
+spi = spidev.SpiDev(0, 0)  # SPI bus 0, device 0
+spi.max_speed_hz = 32000000  # Adjust as per your display's specification
+
+# Setup GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(LCD_DC, GPIO.OUT)
+GPIO.setup(LCD_RST, GPIO.OUT)
+GPIO.setup(LCD_BL, GPIO.OUT)
+GPIO.setup(LCD_CS, GPIO.OUT)  # If your library handles CS internally, you might not need to manually configure this
+GPIO.output(LCD_BL, GPIO.HIGH)  # Turn on backlight
 
 # Initialize LCD
 def lcd_test():
     try:
-        # Create LCD object
-        disp = LCD_2inch.LCD_2inch()
+        # Create LCD object with SPI and GPIO configurations
+        disp = LCD_2inch.LCD_2inch(dc=LCD_DC, rst=LCD_RST, bl=LCD_BL, cs=LCD_CS, spi=spi)
         disp.Init()
         disp.clear()  # Clear the screen to start fresh
         
@@ -21,19 +41,16 @@ def lcd_test():
         def display_frames(emotion_path):
             """Display frames from the emotion directory"""
             frames = sorted([f for f in os.listdir(emotion_path) if f.endswith('.png')])
-
-            # Pre-load images into memory to avoid opening files repeatedly
             images = [Image.open(os.path.join(emotion_path, frame)) for frame in frames]
-            
             for image in images:
                 disp.ShowImage(image)  # Display image on the LCD
-                time.sleep(0.05)  # Shorten display time to 0.05s per frame (faster transition)
+                time.sleep(0.05)  # Shorten display time to 0.05s per frame
 
         # Test all emotions in sequence
         for emotion, path in emotion_paths.items():
             print(f"Displaying {emotion} emotion...")
             display_frames(path)
-            time.sleep(0.5)  # Pause between emotions, can reduce this as well
+            time.sleep(0.5)  # Pause between emotions
         
         # Clear the screen after displaying all emotions
         print("Clearing screen...")
@@ -44,6 +61,8 @@ def lcd_test():
         print("Test interrupted")
     except IOError as e:
         print(f"Error: {e}")
+    finally:
+        GPIO.cleanup()  # Clean up GPIO to ensure we leave them in a safe state
 
 if __name__ == "__main__":
     lcd_test()
