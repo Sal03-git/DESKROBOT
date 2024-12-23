@@ -1,40 +1,17 @@
+from lib import LCD_2inch
 import time
-from lib import LCD_2inch  # Import the LCD library
-from PIL import Image, ImageDraw, ImageFont  # For image handling
 
-# Initialize LCD
-def lcd_test():
-    try:
-        # Create LCD object
-        disp = LCD_2inch.LCD_2inch()
-        disp.Init()
-        disp.clear()  # Clear the screen to start fresh
-        
-        print("Displaying test image...")
-        
-        # Create a blank image with white background
-        width = disp.width
-        height = disp.height
-        image = Image.new("RGB", (width, height), "white")
-        draw = ImageDraw.Draw(image)
-        
-        # Draw test shapes
-        draw.rectangle((0, 0, width, height), outline="black", fill="blue")  # Full blue rectangle
-        draw.ellipse((20, 20, 220, 300), outline="red", fill="yellow")  # Yellow circle with red outline
-        draw.text((60, 150), "Hello, LCD!", fill="black")  # Text in the center
-        
-        # Show the image on the LCD
-        disp.ShowImage(image)
-        
-        time.sleep(5)  # Display for 5 seconds
-        print("Clearing screen...")
-        disp.clear()  # Clear the screen again
-        
-    except KeyboardInterrupt:
-        disp.module_exit()  # Graceful exit
-        print("Test interrupted")
-    except IOError as e:
-        print(f"Error: {e}")
+def simple_test():
+    disp = LCD_2inch.LCD_2inch()
+    disp.Init()
+    disp.clear()
+
+    # Fill the screen with a blue color
+    disp.fill(0x001F)  # Color code for blue in RGB565
+    time.sleep(10)  # Display for 10 seconds
+
+    disp.clear()
+    disp.module_exit()
 
 if __name__ == "__main__":
-    lcd_test()
+    simple_test()
