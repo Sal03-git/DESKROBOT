@@ -40,7 +40,9 @@ def lcd_data(data):
     if isinstance(data, int):  # Single byte
         spi.xfer([data])
     elif isinstance(data, (bytes, bytearray, list)):  # Multiple bytes
-        spi.xfer(list(data))
+        # Split data into chunks of 4096 bytes
+        for i in range(0, len(data), 4096):
+            spi.xfer(data[i:i+4096])
     else:
         raise ValueError("Unsupported data type in lcd_data")
 
@@ -63,8 +65,8 @@ def lcd_init():
 def lcd_display_raw(data):
     """Send raw data to the LCD."""
     if isinstance(data, (bytes, bytearray)):
-        data = list(data)
-    lcd_data(data)
+        data = list(data)  # Convert to list if needed
+    lcd_data(data)  # Pass the data to lcd_data for transfer
 
 # Test pattern display
 def draw_test_pattern():
@@ -85,7 +87,7 @@ def draw_test_pattern():
 
     # Convert image to raw RGB data
     raw_data = image.convert("RGB").tobytes()
-    lcd_display_raw(raw_data)
+    lcd_display_raw(raw_data)  # Send to LCD
 
 # Main program
 try:
