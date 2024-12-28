@@ -66,16 +66,19 @@ def check_sensor():
 
 # Servo control functions
 def servoMed():
+    """Set all servos to the middle position."""
     servoR.angle = 90
     servoL.angle = 90
     servoB.angle = 90
 
 def servoDown():
+    """Move servos to down position."""
     servoR.angle = 0
     servoL.angle = 180
     servoB.angle = 90
 
 def baserotate(reference, change, timedelay):
+    """Rotate the base servo back and forth."""
     for i in range(reference, reference + change, 1):
         servoB.angle = i
         time.sleep(timedelay)
@@ -87,18 +90,21 @@ def baserotate(reference, change, timedelay):
         time.sleep(timedelay)
 
 def HandDownToUp(start, end, timedelay):
+    """Move hands from down to up."""
     for i, j in zip(range(start, end, 1), range((180 - start), (180 - end), -1)):
         servoR.angle = i
         servoL.angle = j
         time.sleep(timedelay)
 
 def HandUpToDown(start, end, timedelay):
+    """Move hands from up to down."""
     for i, j in zip(range(start, end, -1), range((180 - start), (180 - end), 1)):
         servoR.angle = i
         servoL.angle = j
         time.sleep(timedelay)
 
 def happy():
+    """Perform happy animation."""
     servoMed()
     for n in range(5):
         for i in range(0, 120):
@@ -117,6 +123,7 @@ def happy():
             time.sleep(0.004)
 
 def sad():
+    """Perform sad animation."""
     servoDown()
     for i in range(0, 60):
         if i <= 15:
@@ -128,6 +135,7 @@ def sad():
         time.sleep(0.09)
 
 def excited():
+    """Perform excited animation."""
     servoDown()
     for i in range(0, 120):
         if i <= 30:
@@ -139,6 +147,7 @@ def excited():
         time.sleep(0.01)
 
 def show(emotion, count):
+    """Display emotion on the LCD screen."""
     for _ in range(count):
         try:
             disp = LCD_2inch.LCD_2inch()
@@ -155,6 +164,7 @@ def show(emotion, count):
             exit()
 
 def bootup():
+    """Bootup animation."""
     show('bootup3', 1)
     for _ in range(1):
         p2 = multiprocessing.Process(target=show, args=('blink2', 3))
@@ -168,9 +178,11 @@ if __name__ == '__main__':
     p1 = multiprocessing.Process(target=check_sensor, name='p1')
     p1.start()
     bootup()
+    p5 = None  # Ensure p5 is initialized
     while True:
         if event.is_set():
-            p5.terminate()
+            if p5 and p5.is_alive():  # Check if p5 exists and is running
+                p5.terminate()
             event.clear()
             current_emotion = q.get()
             q.empty()
