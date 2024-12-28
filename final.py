@@ -144,7 +144,7 @@ def show(emotion, count):
             disp = LCD_2inch.LCD_2inch()
             disp.Init()
             for i in range(frame_count[emotion]):
-                image = Image.open(f'/home/pi/Desktop/EmoBot/emotions/{emotion}/frame{i}.png')
+                image = Image.open(f'/home/user/Desktop/Emo-main/Code/emotions/{emotion}/frame{i}.png')
                 disp.ShowImage(image)
         except IOError as e:
             logging.info(e)
