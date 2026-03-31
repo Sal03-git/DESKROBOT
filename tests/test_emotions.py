@@ -1,0 +1,49 @@
+import time
+import os
+from PIL import Image
+from lib import LCD_2inch  # Import the LCD library (adjust based on your folder structure)
+
+# Initialize LCD
+def lcd_test():
+    try:
+        # Create LCD object
+        disp = LCD_2inch.LCD_2inch()
+        disp.Init()
+        disp.clear()  # Clear the screen to start fresh
+        
+        # Define the paths to the emotion directories
+        emotion_paths = {
+            "bootup": "/home/user/Desktop/Emo-main/Code/emotions/bootup",
+            "happy": "/home/user/Desktop/Emo-main/Code/emotions/happy",
+            "neutral": "/home/user/Desktop/Emo-main/Code/emotions/neutral"
+        }
+
+        def display_frames(emotion_path):
+            """Display frames from the emotion directory"""
+            frames = sorted([f for f in os.listdir(emotion_path) if f.endswith('.png')])
+
+            # Pre-load images into memory to avoid opening files repeatedly
+            images = [Image.open(os.path.join(emotion_path, frame)) for frame in frames]
+            
+            for image in images:
+                disp.ShowImage(image)  # Display image on the LCD
+                time.sleep(0.05)  # Shorten display time to 0.05s per frame (faster transition)
+
+        # Test all emotions in sequence
+        for emotion, path in emotion_paths.items():
+            print(f"Displaying {emotion} emotion...")
+            display_frames(path)
+            time.sleep(0.5)  # Pause between emotions, can reduce this as well
+        
+        # Clear the screen after displaying all emotions
+        print("Clearing screen...")
+        disp.clear()
+
+    except KeyboardInterrupt:
+        disp.module_exit()  # Graceful exit
+        print("Test interrupted")
+    except IOError as e:
+        print(f"Error: {e}")
+
+if __name__ == "__main__":
+    lcd_test()
