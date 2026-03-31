@@ -1,7 +1,7 @@
 # 🤖 EMO — Emotion-Expressive Desk Robot
 
 <p align="center">
-  <img src="docs/assets/emo_preview.png" alt="EMO Desk Robot" width="300"/>
+  <img src="docs/assets/Emo-Desk.png" alt="EMO Desk Robot" width="300"/>
 </p>
 
 A Raspberry Pi-powered desk companion robot that expresses emotions through an LCD display and reacts to physical interactions via touch and vibration sensors. Built for the **Automatic Control** course at the Arab Academy for Science, Technology and Maritime Transport (AASTMT), December 2024.
